@@ -45,7 +45,7 @@ CustomPopupPanel::CustomPopupPanel(CustomPopupType type, int param1, int param2,
 
 CustomPopupPanel::~CustomPopupPanel()
 {
-	
+	CCLOG("~CustomPopupPanel");
 }
 
 void CustomPopupPanel::onClicked(const string& name)

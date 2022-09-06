@@ -20,6 +20,11 @@ ChannelRoomPanel::ChannelRoomPanel()
 ChannelRoomPanel::~ChannelRoomPanel()
 {
 	//destruct();
+	CCLOG("~ChannelRoomPanel");
+	Layer* temp = dynamic_cast<ChannelMainPannel*>(LayerManager::getSingleton().getCurrentLayer());
+	if (temp != nullptr) {
+		LayerManager::getSingleton().popLayer();
+	}
 }
 
 void ChannelRoomPanel::initPanel()

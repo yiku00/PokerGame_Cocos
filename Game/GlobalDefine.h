@@ -4,7 +4,7 @@
 
 // Version
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 7024 //0905 확인할때 7024였음
+#define VERSION_MINOR 7021
 #define VERSION_MAINTENANCE 1
 #define VERSION_NAME "BETA 3"
 

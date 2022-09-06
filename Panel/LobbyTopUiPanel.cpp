@@ -600,6 +600,7 @@ void LobbyTopUiPanel::onClicked(const string& name)
 				Layer* temp = dynamic_cast<ChannelMainPannel*>(LayerManager::getSingleton().getCurrentLayer());
 				if (temp != nullptr) {
 					LayerManager::getSingleton().popLayer();
+					//onClicked(getButtonName(mCloseBtn));
 					//GameDataManager::getSingletonPtr()->PopUiState();
 				}
 				

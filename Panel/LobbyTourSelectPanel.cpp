@@ -26,6 +26,11 @@ LobbyTourSelectPanel::LobbyTourSelectPanel()
 
 LobbyTourSelectPanel::~LobbyTourSelectPanel()
 {
+	CCLOG("~LobbyTourSelectPanel");
+	Layer* temp = dynamic_cast<LobbyTournamentMain*>(LayerManager::getSingleton().getCurrentLayer());
+	if (temp != nullptr) {
+		LayerManager::getSingleton().popLayer();
+	}
 }
 
 void LobbyTourSelectPanel::InitPanel()
@@ -808,7 +813,7 @@ void LobbyTourSelectPanel::InitRankPhoto(int _index, bool isTryDownload)
 	}
 	else
 	{
-		m_pRankerPhoto[_index]->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info.characterid()));
+		m_pRankerPhoto[_index]->setSpriteFrameWithFile("ui/default_photo.png");
 		UpdateRankPhoto(_index);
 	}
 }
