@@ -35,13 +35,15 @@ public:
 	void launchPurchaseFlow(string productId, string produceName, string tID);		//구글 스토어 결제
 	void consumeProduceId(string productId);
 	void checkAsyncInventory();
+	void checkUnpaid(std::string tid, std::string pid, std::string uid);
 
 //payment type
 	void setPaymentType(PaymentTypeType type) { mPaymentType = type; }
 	PaymentTypeType getPaymentType() { return mPaymentType; }
 
 public:
-	void onOneStorePurchaseRequestResult(bool isSucess, string errMsg , string tid , string receipt);
+	void onOneStorePurchaseRequestResult(bool isSucess, string errMsg , string tid , string receipt, string pid);
+	void onOneStorePurchaseRemainRequestResult(bool isSucess, string errMsg, string tid, string receipt, string pid);
 	void onGoogleStorePurchaseRequestResult(bool isSucess, string errMsg, string tid, string orderId, string purchaseToken);
 	void onGoogleStoreCheckPurchaseRequestResult(bool isSucess, string inappId, string tid, string orderId, string purchaseToken);
 

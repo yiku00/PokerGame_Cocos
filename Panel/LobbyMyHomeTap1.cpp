@@ -236,52 +236,53 @@ void LobbyMyHomeTap1::InitMyPhoto(bool isTryDownload)
 	bool _ret;
 
 	m_pMyPhoto->setSpriteFrameWithFile(FriendHelper::getDefaultImg());
-	if (GameDataManager::getSingletonPtr()->m_FacebookUserId != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			GameDataManager::getSingletonPtr()->m_FacebookUserId,
-			GameDataManager::getSingletonPtr()->m_FacebookUserPhotoUrl,
-			DOWNLOAD_FILE_TYPE::MYROOM_PHOTO,
-			m_pMyPhoto,
-			isTryDownload,
-			STATIC_PHOTO_FOLDER
-			);
+	//if (GameDataManager::getSingletonPtr()->m_FacebookUserId != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		GameDataManager::getSingletonPtr()->m_FacebookUserId,
+	//		GameDataManager::getSingletonPtr()->m_FacebookUserPhotoUrl,
+	//		DOWNLOAD_FILE_TYPE::MYROOM_PHOTO,
+	//		m_pMyPhoto,
+	//		isTryDownload,
+	//		STATIC_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			CCRect rect = getDummy("dmy_photo");
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		CCRect rect = getDummy("dmy_photo");
 
-			m_pMyPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
-			m_pMyPhoto->setVisible(true);
-		}
-	}
-	else if (GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl != "")
-	{
-		string userId = GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_NickName;
-		string url = GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl;
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			userId,
-			url,
-			DOWNLOAD_FILE_TYPE::MYROOM_PHOTO,
-			m_pMyPhoto,
-			isTryDownload,
-			STATIC_PHOTO_FOLDER
-			);
+	//		m_pMyPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
+	//		m_pMyPhoto->setVisible(true);
+	//	}
+	//}
+	//else if (GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl != "")
+	//{
+	//	string userId = GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_NickName;
+	//	string url = GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl;
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		userId,
+	//		url,
+	//		DOWNLOAD_FILE_TYPE::MYROOM_PHOTO,
+	//		m_pMyPhoto,
+	//		isTryDownload,
+	//		STATIC_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			CCRect rect = getDummy("dmy_photo");
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		CCRect rect = getDummy("dmy_photo");
 
-			m_pMyPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
-			m_pMyPhoto->setVisible(true);
-		}
-	}
-	else
-	{
-		m_pMyPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());		
-	}
+	//		m_pMyPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
+	//		m_pMyPhoto->setVisible(true);
+	//	}
+	//}
+	//else
+	//{
+	//	m_pMyPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());		
+	//}
+	m_pMyPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());
 	CCRect rect = getDummy("dmy_photo");
 	m_pMyPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
 }

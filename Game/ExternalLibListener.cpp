@@ -17,7 +17,7 @@ template<> ExternalLibListener* Singleton<ExternalLibListener>::msSingleton = 0;
 ExternalLibListener::ExternalLibListener()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-	IGAWorksManager::getSingletonPtr()->SetListener(this);
+	//IGAWorksManager::getSingletonPtr()->SetListener(this);
 	FacebookManager::getSingletonPtr()->SetListener(this);
 #endif
 	m_externalEvent.m_type = NO_EVENT;
@@ -29,10 +29,7 @@ ExternalLibListener::~ExternalLibListener()
 
 void ExternalLibListener::onPopupLoaded(const bool isLoad)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-	if (isLoad)
-		IGAWorksManager::getSingletonPtr()->ShowPopup();
-#endif
+
 }
 
 void ExternalLibListener::onPopupDeepLinkClicked(const string& result)
@@ -48,7 +45,7 @@ void ExternalLibListener::onPopupDeepLinkClicked(const string& result)
 		if (linkData.isMember("url"))
 		{
 			urlStr = linkData["url"].asString();
-			IGAWorksManager::getSingletonPtr()->CloseTopPopup();
+			//IGAWorksManager::getSingletonPtr()->CloseTopPopup();
 			AndroidUtilManager::getSingletonPtr()->InitWebView(urlStr, 50, 50, 1000, 500);
 		}
 		else

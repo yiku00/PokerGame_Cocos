@@ -272,7 +272,7 @@ public:
 	bool m_popupAlram;
 };
 
-class GameDataManager : public Singleton < GameDataManager >
+class GameDataManager : public Singleton < GameDataManager >, public Node
 {
 public:
 	GameDataManager();
@@ -387,13 +387,15 @@ public:
 
 	const W_SkinData* getSkinData(int id);
 
-
-
+	void SetSurvivalNotiTimer();
+	void MakeRegularAdminPopup();
+	bool ShouldAsyncTime();
 public:
 	bool m_bEditTextField;
 	TextField* m_onFocusTextFeild;
 	std::string m_eidtText;
-
+	std::list<W_NoticeData> mNotidata;
+	std::list<W_NoticeData> mValidNotidata;
 	bool m_isDirectTournamentLink;
 	bool m_isDirectSurvivalLink;
 	int64 LastSendTimeUpdateSurvival;
@@ -606,6 +608,12 @@ public:
 
 	bool LoadFileImage(std::string _userId, std::string _url, DOWNLOAD_FILE_TYPE imgType, Widget * _image, bool isDownload = true, std::string _folderName = "", int _index = -1);
 	time_t GetNowTime();
+	void AsyncTime(int64 ServerTime);
+	int64 NowTime = -1;
+	int64 Async_ServerTime = -1;
+	int64 Async_ClientTime = -1;
+	int AsyncDiff = -1;
+	float AsyncDelta = -1;
 public:
 	std::string m_FacebookUserName;
 	std::string m_FacebookUserId;

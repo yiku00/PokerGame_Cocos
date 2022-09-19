@@ -87,6 +87,8 @@ SimplePopupPanel::SimplePopupPanel(SimplePopupType type, const string&text, cons
 
 SimplePopupPanel::~SimplePopupPanel()
 {
+	if(mType == AdminNotice)
+		CCLOG("SImplepopup delete");
 	//destruct();
 }
 
@@ -455,9 +457,10 @@ void SimplePopupPanel::ShowPanel(bool isVisible)
 
 		getButton("sbtn_cancel")->setVisible(false);
 		getButton("sbtn_cancel")->setEnable(false);
+
 		mBoard = getSkel("skel_toastbar");
 		mBoard->setListener(this);
-		//mBoard->setPosition(cocos2d::Vec2(512,476));
+		
 		if (mAdminText != nullptr)
 		{
 			mAdminText->setPositionX(getSkel("skel_toastbar")->getPositionX());
@@ -688,7 +691,7 @@ void SimplePopupPanel::initDesc(const string& text)
 		
 		mAdminText->setPositionX(getSkel("skel_toastbar")->getPositionX());
 		mAdminText->setPositionY(getSkel("skel_toastbar")->getPositionY());
-
+		GameDataManager::getSingletonPtr()->NoticePanelDesc = text;
 
 		//mAdminText->setPositionY(this->getPositionY() + getPositionY() + mDesc->getPositionY() - 100);
 		mDesc->setVisible(false);
@@ -716,7 +719,23 @@ void SimplePopupPanel::onRefresh()
 void SimplePopupPanel::TurnOffAdminMessage(float t)
 {
 	mBoard->playAnimation("toastbar2_end");
+	GameDataManager::getSingletonPtr()->NoticePanelDesc = "";
 	//GameDataManager::getSingletonPtr()->isNoticePanelExist = false;
+}
+
+void SimplePopupPanel::TurnOnAdminMessage()
+{
+	CCLOG("asdasdasdas");
+	LayerManager::getSingleton().pushDynamicLayer(this, DYNAMIC_PUSH_LAYER);
+}
+
+
+void SimplePopupPanel::RegistTurnOnAdminMessage(float remainDt)
+{
+	runAction(CCSequence::create(
+		CCDelayTime::create(remainDt),
+		CCCallFunc::create(this, callfunc_selector(SimplePopupPanel::TurnOnAdminMessage)),
+		NULL));
 }
 
 void SimplePopupPanel::RegistTurnOffAdminMessage(float remainDt)

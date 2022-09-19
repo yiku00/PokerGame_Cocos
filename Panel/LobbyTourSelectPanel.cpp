@@ -793,29 +793,31 @@ void LobbyTourSelectPanel::InitRankPhoto(int _index, bool isTryDownload)
 	W_TourInfo_W_TourRanker _info = _tourInfo.tranker(_index);
 	bool _ret;
 
-	if (_info.has_imageurl() && _info.imageurl() != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			_info.name(),
-			_info.imageurl(),
-			DOWNLOAD_FILE_TYPE::TOURNAMENT_PHOTO,
-			m_pRankerPhoto[_index],
-			isTryDownload,
-			TEMP_PHOTO_FOLDER,
-			_index
-			);
+	//if (_info.has_imageurl() && _info.imageurl() != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		_info.name(),
+	//		_info.imageurl(),
+	//		DOWNLOAD_FILE_TYPE::TOURNAMENT_PHOTO,
+	//		m_pRankerPhoto[_index],
+	//		isTryDownload,
+	//		TEMP_PHOTO_FOLDER,
+	//		_index
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			UpdateRankPhoto(_index);
-		}
-	}
-	else
-	{
-		m_pRankerPhoto[_index]->setSpriteFrameWithFile("ui/default_photo.png");
-		UpdateRankPhoto(_index);
-	}
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		UpdateRankPhoto(_index);
+	//	}
+	//}
+	//else
+	//{
+	//	m_pRankerPhoto[_index]->setSpriteFrameWithFile("ui/default_photo.png");
+	//	UpdateRankPhoto(_index);
+	//}
+	m_pRankerPhoto[_index]->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info.characterid()));
+	UpdateRankPhoto(_index);
 }
 
 void LobbyTourSelectPanel::UpdateRankPhoto(int _cellIndex)

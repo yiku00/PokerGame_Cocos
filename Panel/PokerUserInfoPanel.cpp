@@ -482,29 +482,32 @@ void PokerUserInfoPanel::InitUserPhoto(bool isTryDownload)
 	RoomUserData* _pUserInfo = GameDataManager::getSingletonPtr()->GetGameRoomInfoPtr()->GetUserDataPtr(_serverIndex);
 	PlayerData* _info = _pUserInfo->m_pPlayerData;
 
-	bool _ret;
-	if (_info->m_thumbnailUrl != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			_info->m_NickName,
-			_info->m_thumbnailUrl,
-			DOWNLOAD_FILE_TYPE::GAMEUSER_PHOTO,
-			m_pPhoto,
-			isTryDownload,
-			TEMP_PHOTO_FOLDER
-			);
+	//bool _ret;
+	//if (_info->m_thumbnailUrl != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		_info->m_NickName,
+	//		_info->m_thumbnailUrl,
+	//		DOWNLOAD_FILE_TYPE::GAMEUSER_PHOTO,
+	//		m_pPhoto,
+	//		isTryDownload,
+	//		TEMP_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			UpdateUserPhoto();
-		}
-	}
-	else
-	{
-		m_pPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->m_CharacterIdx));
-		UpdateUserPhoto();		
-	}
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		UpdateUserPhoto();
+	//	}
+	//}
+	//else
+	//{
+	//	m_pPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->m_CharacterIdx));
+	//	UpdateUserPhoto();		
+	//}
+
+	m_pPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->m_CharacterIdx));
+	UpdateUserPhoto();
 }
 
 void PokerUserInfoPanel::UpdateUserPhoto()

@@ -1342,10 +1342,11 @@ void WebService::_recvSlotMachineRes(HttpMessage* msg)
 		GameDataManager::getSingletonPtr()->OnWebserviceMassage(W_S2C_UPDATE_SLOTMACHINE_INFO_RES);
 		return;
 	}
-
+	std::vector<int> tmp;
 	int _size = res.pattern_size();
 	for (int _i = 0; _i < _size; _i++)
 	{
+		tmp.push_back(res.pattern(_i));
 		if (_i >= 3)
 			continue;
 		
@@ -4984,18 +4985,20 @@ void WebService::recvNoticeinfoRes(HttpMessage* msg)
 	W_NoticeInfoRes res;
 	res.ParseFromArray(msg->getData(), msg->getSize());
 	NXASSERT(res.IsInitialized());
-
-	
+	GameDataManager::getSingletonPtr()->AsyncTime(res.nowtime());
 
 	if (res.msg() != "") {
 		GameDataManager::getSingletonPtr()->NoticePanelDesc = res.msg();
-		SimplePopupPanel* _popupPanel = new SimplePopupPanel(SimplePopupPanel::SimplePopupType::AdminNotice, res.msg());
+		SimplePopupPanel* _popupPanel = new SimplePopupPanel(SimplePopupPanel::SimplePopupType::AdminNotice, res.msg().c_str());
 		if (_popupPanel)
 		{
 			LayerManager::getSingleton().pushDynamicLayer(_popupPanel, DYNAMIC_PUSH_LAYER);
+			_popupPanel->RemainFromEnd = res.remainsec();
 			_popupPanel->RegistTurnOffAdminMessage(res.remainsec());
 		}
 	}
+
+	GameDataManager::getSingletonPtr()->SetSurvivalNotiTimer();
 }
 
 void WebService::_sendSkinBuyReq(int32 id)
@@ -5343,20 +5346,32 @@ void WebService::recvPlatoformOutRes(HttpMessage* msg)
 
 }
 
+
 bool WebService::CheckNotiSend()
 {
 	auto Nowtime = GameDataManager::getSingletonPtr()->GetNowTime();
-	struct tm* Nowtime_tm;
-	Nowtime_tm = localtime(&Nowtime);
+	struct tm Nowtime_tm;
+	struct tm LastTime_tm;
+	
+	localtime_r(&Nowtime , &Nowtime_tm);
+	localtime_r(&LastSendNotiTime,&LastTime_tm);
 
-	if (Nowtime_tm == nullptr)
+	if (Nowtime < 0)
 		return false;
 
-	if (((Nowtime - LastSendNotiTime) > 600) && 
-		(Nowtime_tm->tm_min%10 == 0) &&
-		(GameDataManager::getSingletonPtr()->getUserInfo() != 0)) {
+	if (GameDataManager::getSingletonPtr()->ShouldAsyncTime()){
+		return true;
+	}
 		
-		LastSendNotiTime = Nowtime;
+
+	bool a = (Nowtime_tm.tm_min != LastTime_tm.tm_min);
+	bool b = (Nowtime_tm.tm_min % 10 == 0);
+	bool c = (GameDataManager::getSingletonPtr()->getUserInfo() != 0);
+	bool d = a && b && c;
+
+	if ((Nowtime_tm.tm_min != LastTime_tm.tm_min) &&
+		(Nowtime_tm.tm_min%10 == 0) &&
+		(GameDataManager::getSingletonPtr()->getUserInfo() != 0)) {
 		return true;
 	}
 	else
@@ -5366,7 +5381,7 @@ bool WebService::CheckNotiSend()
 void WebService::CheckAndRedirectIP(W_ChannelInfo* _param)
 {
 	if (GAMBLE_DEFAULT_URL == "http://192.168.0.161:8200/poker_server/")
-		_param->set_ip(LocalIp);
+		_param->set_ip("192.168.0.161");
 	else if (GAMBLE_DEFAULT_URL == "http://192.168.0.164:8201/poker_server/")
 		_param->set_ip("192.168.0.164");
 	

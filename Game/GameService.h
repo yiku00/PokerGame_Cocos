@@ -17,17 +17,15 @@ http ://14.63.198.175:8200/poker_server/gateway_servlet
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 //static const string GAMBLE_DEFAULT_URL = "http://106.243.69.210:8200/poker_server/";		// 테스트 외부 서버
-//static const string GAMBLE_DEFAULT_URL = "https://game.playpotpoker.com/poker_server/"; // 외부 아마존 NEW
-static const string GAMBLE_DEFAULT_URL = "http://106.243.69.210:8200/poker_server/";		// 심의 내부 서버
+static const string GAMBLE_DEFAULT_URL = "https://game.playpotpoker.com/poker_server/"; // 외부 아마존 NEW
 static const std::string GAMBLE_GAME_URL = "";//"192.168.0.161";
 //static const string GAMBLE_GAME_IP = "106.243.69.210";
-static const string GAMBLE_GAME_IP = "106.243.69.210";
+static const string GAMBLE_GAME_IP = "game.playpotpoker.com";
 #else
 //static const std::string GAMBLE_DEFAULT_URL = "https://game.playpotpoker.com/poker_server/"; // 외부 아마존 NEW
-//static const string GAMBLE_DEFAULT_URL = "http://192.168.0.161:8200/poker_server/";		// 내부 서버
-static const string GAMBLE_DEFAULT_URL = "http://192.168.0.164:8201/poker_server/";		// 심의 내부 서버
+static const string GAMBLE_DEFAULT_URL = "http://192.168.0.161:8200/poker_server/";		// 내부 서버
 static const std::string GAMBLE_GAME_URL = "";//"192.168.0.161";
-static const string GAMBLE_GAME_IP = "192.168.0.161";
+static const string GAMBLE_GAME_IP = "";
 
 #endif // DEBUG
 

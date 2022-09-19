@@ -48,7 +48,7 @@ void LobbyRecordSurvivalPanel::_init()
 	mMoneyInAmountLabel = mMainPanel->getLabel("txt_moneyin_sum");
 	mBestGetMoneyLabel = mMainPanel->getLabel("txt_topgold_sum");
 	
-	Trophy = mMainPanel->getSkel("skel_mark_big");
+	Trophy = mMainPanel->getImage("img_trophy_gold");
 	Trophy->setScale(1.45f);
 	Trophy->setVisible(false);
 
@@ -99,7 +99,6 @@ void LobbyRecordSurvivalPanel::setActivate(bool activate)
 		}
 		else {
 			mContentPanel_1->setVisible(false);
-			mMainPanel->getLabel("txt_no_win_desc")->setVisible(true);
 
 		}
 
@@ -138,6 +137,19 @@ void LobbyRecordSurvivalPanel::setActivate(bool activate)
 		mMoneyInAmountLabel->setString(moneyInStr.c_str());
 		string moneyStr = GameDataManager::getSingletonPtr()->GetKoreanLiteral(StringConverter::toString(bestMoney)) + GameStringDepot::getSingleton().getString("TXT_GOLD_UNIT");
 		mBestGetMoneyLabel->setString(moneyStr.c_str());
+
+		if (victoryAmount > 0) {
+			Trophy->setVisible(true);
+			Trophy->setSpriteFrameWithFile("ui/trophy_gold.png");
+		}
+		else if (secondAmount > 0) {
+			Trophy->setVisible(true);
+			Trophy->setSpriteFrameWithFile("ui/trophy_silver.png");
+		}
+		else {
+			mMainPanel->getLabel("txt_no_win_desc")->setVisible(true);
+			Trophy->setVisible(false);
+		}
 		
 	}
 	else {

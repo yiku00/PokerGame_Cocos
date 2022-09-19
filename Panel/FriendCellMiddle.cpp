@@ -297,32 +297,32 @@ void FriendCellMiddle::InitFriendPhoto(int _index, bool isTryDownload)
 		CCLog("InitFriendPhoto FRIEND_REQUEST_TYPE _info = %s", _info->imageurl().c_str());
 	}
 
-	if (_info->has_imageurl() && _info->imageurl() != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			_info->name(),
-			_info->imageurl(),
-			_type,
-			mUserPhoto,
-			isTryDownload,
-			TEMP_PHOTO_FOLDER,
-			_index
-			);
-		
-		if (mCellType == FRIEND_REQUEST_TYPE) {
-			CCLog("InitFriendPhoto _ret = %d", _ret);
-		}
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			UpdateFriendPhoto(_index);
-		}
-	}
-	else
-	{
-		mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->characterid()));
-	}
-
+	//if (_info->has_imageurl() && _info->imageurl() != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		_info->name(),
+	//		_info->imageurl(),
+	//		_type,
+	//		mUserPhoto,
+	//		isTryDownload,
+	//		TEMP_PHOTO_FOLDER,
+	//		_index
+	//		);
+	//	
+	//	if (mCellType == FRIEND_REQUEST_TYPE) {
+	//		CCLog("InitFriendPhoto _ret = %d", _ret);
+	//	}
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		UpdateFriendPhoto(_index);
+	//	}
+	//}
+	//else
+	//{
+	//	mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->characterid()));
+	//}
+	mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->characterid()));
 	CCRect rect = mMainPanel->getDummy("dmy_photo");
 	mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
 }

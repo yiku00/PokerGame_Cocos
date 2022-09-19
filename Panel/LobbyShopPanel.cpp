@@ -585,7 +585,7 @@ void LobbyShopPanel::update(float dt)
 	updateNotiWidget();
 }
 
-bool LobbyShopPanel::handling(STCMD &stCmd)
+bool LobbyShopPanel::handling(STCMD& stCmd)
 {
 	if (LayerManager::getSingleton().hasLayerType<BuyCharacterConfirmPanel>()) {
 		return false;
@@ -596,12 +596,13 @@ bool LobbyShopPanel::handling(STCMD &stCmd)
 		return false;
 	}
 
-	if (auto *pstIt = castCMD<STCMD_IAP_ONESTORE_REQUEST_RESULT>(&stCmd))
+	if (auto* pstIt = castCMD<STCMD_IAP_ONESTORE_REQUEST_RESULT>(&stCmd))
 	{
 		STCMD_IAP_ONESTORE_REQUEST_RESULT res = *pstIt;
 		if (res.isSucess) {
 			CCLog("STCMD_IAP_REQUEST_RESULT sucess res.tid = %s , res.txid = %s , res.receipt = %s", res.tid.c_str(), res.txid.c_str(), res.receipt.c_str());
-			sendW_PayReq(res.tid, res.txid, res.receipt);
+			//mBuyCashId = stoi(res.pid);
+			sendW_PayReq(res.tid, res.txid, res.receipt, "");
 		}
 		else {
 			CCLog("STCMD_IAP_REQUEST_RESULT false");
@@ -610,12 +611,14 @@ bool LobbyShopPanel::handling(STCMD &stCmd)
 		}
 		return true;
 	}
-	else if (auto *pstIt = castCMD<STCMD_IAP_GOOGLESTORE_REQUEST_RESULT>(&stCmd))
+
+
+	else if (auto* pstIt = castCMD<STCMD_IAP_GOOGLESTORE_REQUEST_RESULT>(&stCmd))
 	{
 		STCMD_IAP_GOOGLESTORE_REQUEST_RESULT res = *pstIt;
 		if (res.isSucess) {
-			CCLog("STCMD_IAP_REQUEST_RESULT sucess res.tid = %s , res.txid = %s , res.receipt = %s", res.tid.c_str(), res.orderId.c_str(), res.purchaseToken.c_str());			
-			sendW_PayReq(res.tid, res.orderId, res.purchaseToken);
+			CCLog("STCMD_IAP_REQUEST_RESULT sucess res.tid = %s , res.txid = %s , res.receipt = %s", res.tid.c_str(), res.orderId.c_str(), res.purchaseToken.c_str());
+			sendW_PayReq(res.tid, res.orderId, res.purchaseToken, "");
 		}
 		else {
 			CCLog("STCMD_IAP_REQUEST_RESULT false");
@@ -625,6 +628,7 @@ bool LobbyShopPanel::handling(STCMD &stCmd)
 		return true;
 	}
 	return false;
+	
 }
 
 void LobbyShopPanel::SetTapIdx(int idx)
@@ -1851,7 +1855,7 @@ void LobbyShopPanel::UpdateRubyShopList(int _toIdx, int _dstIdx)
 		}		
 }
 
-void LobbyShopPanel::sendW_PayReq(string tID, string txId, string receipt)
+void LobbyShopPanel::sendW_PayReq(string tID, string txId, string receipt, string pid)
 {
 	CCLog("sendW_PayReq tID = %s , txid = %s, recept = %s", tID.c_str(), txId.c_str(), receipt.c_str());
 
@@ -1955,6 +1959,7 @@ void LobbyShopPanel::sendWPayReserveReq(int cashId)
 
 void LobbyShopPanel::recvWPayReserveRes(HttpMessage* msg)
 {
+
 	if (msg->hasCode()) {
 		return;
 	}
@@ -1977,6 +1982,7 @@ void LobbyShopPanel::recvWPayReserveRes(HttpMessage* msg)
 			IapManager::getSingleton().launchPurchaseFlow(res.productid(), "", res.tid());
 		}		
 #else
+		CCLog("서버에서 받는 tid =  %s", res.tid());
 		//WebService::getSingletonPtr()->_sendCashBuyReq(mBuyCashId);
 		STCMD_IAP_ONESTORE_REQUEST_RESULT iapRequestResult;
 		iapRequestResult.isSucess = true;

@@ -79,7 +79,7 @@ GameDataManager::GameDataManager()
 	createImageFolder();
 
 	m_bEditTextField = false;
-
+	Node::onEnter();
 	m_onFocusTextFeild = nullptr;
 
 	m_hasTourGameInfo = false;
@@ -166,7 +166,7 @@ GameDataManager::~GameDataManager()
 	RemoveHistoryState();
 	RemoveTournamentOfInfo();
 	RemoveSurvivalOfInfo();
-
+	Node::onExit();
 	delete m_pOptionValue;
 }
 bool GameDataManager::canUpdateSurvival()
@@ -196,7 +196,7 @@ bool GameDataManager::canUpdateSurvival()
 	Nowtime_tm = localtime(&Nowtime);
 
 	if (Nowtime_tm == nullptr)
-		result2 = false;
+		return false;
 
 	
 	if (((Nowtime - LastSendTimeUpdateSurvival) > 600) &&//패킷을 보낸지 10분이 지났고
@@ -226,6 +226,19 @@ void GameDataManager::SaveReplayTutorialComplate()
 
 	_pUserDefault->setBoolForKey(gReplayTutorialKey, m_ReplayTutotial);
 	_pUserDefault->flush();
+}
+
+bool GameDataManager::ShouldAsyncTime()
+{
+	if (Async_ClientTime < 0 || Async_ServerTime < 0)
+		return false;
+	if (abs(NowTime - WebService::getSingletonPtr()->getLastSendNotiTime()) < 5)
+		return false;
+	int a = time(NULL) - NowTime;
+	int b = AsyncDiff;
+
+	bool result = (abs(a - b) > 5);
+	return result;
 }
 
 PlayerData* GameDataManager::GetPlayerDataPtr()
@@ -516,6 +529,8 @@ bool GameDataManager::MakeRoom(char * data, int size)
 
 			m_GameRoomInfo->refreshRoomNo();
 
+			WebService::getSingleton().sendNoticeinfoReq();
+			
 			//cout << U8("SCENE LOADING END!!!!") << endl;
 
 			return true;
@@ -1416,7 +1431,12 @@ W_GameData* GameDataManager::InitGameData(const W_GameData& data)
 {
 	mGameData = new W_GameData();
 	mGameData->CopyFrom(data);
-
+	std::list<W_NoticeData> tmp;
+	for (int i = 0; i < mGameData->scheduleddata().size(); i++)
+	{
+		tmp.push_back(mGameData->scheduleddata(i));
+	}
+	mNotidata = tmp;
 	_writeFile(m_Path);
 	_makeHash();
 	setModel();
@@ -2010,6 +2030,11 @@ void GameDataManager::ReomveChannelRoomInfoList()
 
 void GameDataManager::update(float dt)
 {
+	if (NowTime > 0) {
+		AsyncDelta += dt;
+		NowTime = Async_ServerTime + (int64)AsyncDelta;
+	}
+
 	if (m_bEditTextField == true)
 	{
 		CCLog("GameDataManager::update m_bEditTextField");
@@ -2073,6 +2098,7 @@ void GameDataManager::update(float dt)
 			mPlayTimeHour += perHour;
 		}
 	}
+
 }
 
 std::string GameDataManager::GetRemainWeeklyBonusTime(int _type)
@@ -3122,11 +3148,23 @@ bool GameDataManager::LoadFileImage(std::string _userId, std::string _url, DOWNL
 
 time_t GameDataManager::GetNowTime()
 {
-	time_t timer;
-	//struct tm* t;
-	timer = time(NULL); // 1970년 1월 1일 0시 0분 0초부터 시작하여 현재까지의 초
-	//t = localtime(&timer); // 포맷팅을 위해 구조체에 넣기
-	return timer;
+	if (NowTime < 0) {
+		time_t timer;
+		timer = time(NULL); // 1970년 1월 1일 0시 0분 0초부터 시작하여 현재까지의 초
+		return timer;
+	}
+	else
+		return NowTime;
+}
+
+void GameDataManager::AsyncTime(int64 ServerTime)
+{
+	//auto millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	NowTime = ServerTime;
+	Async_ServerTime = ServerTime;
+	Async_ClientTime = time(NULL);
+	AsyncDiff = Async_ClientTime - Async_ServerTime;
+	AsyncDelta = 0;
 }
 
 int GameDataManager::getTicketCount(int _ticketId)
@@ -3509,6 +3547,63 @@ const W_SkinData* GameDataManager::getSkinData(int id)
 	return nullptr;
 }
 
+void GameDataManager::SetSurvivalNotiTimer()
+{
+	time_t CURRENT = GetNowTime();
+	time_t START, END;
+	this->stopAllActions();
+	struct tm start;
+	struct tm end;
+	struct tm* current = localtime(&CURRENT);
+	mValidNotidata.clear();
+	mValidNotidata = mNotidata;
+	std::list< W_NoticeData>::iterator it;
+	for (it = mValidNotidata.begin(); it != mValidNotidata.end(); it)
+	{
+		start = StringToTime(it->startdt());
+		end = StringToTime(it->enddt());
+		START = mktime(&start);
+		END = mktime(&end);
+
+		int RemainFromStart = START - CURRENT;
+		int RemainFromEnd = END - CURRENT;
+		int duration = END - START;
+		if (RemainFromStart < 0) {
+			RemainFromStart = 0;
+			it->set_enddt(StringConverter::toString(RemainFromEnd));
+		}
+		else {
+			it->set_enddt(StringConverter::toString(duration));
+		}
+			
+
+		if (RemainFromEnd < 0) {
+			mValidNotidata.erase(it++);
+		}
+		else {
+			runAction(CCSequence::create(
+				CCDelayTime::create(RemainFromStart),
+				CCCallFunc::create(this, callfunc_selector(GameDataManager::MakeRegularAdminPopup)),
+				NULL));
+			it++;
+		}
+	}
+}
+
+void GameDataManager::MakeRegularAdminPopup()
+{
+	std::list< W_NoticeData>::iterator it;
+	it = mValidNotidata.begin();
+	int i = stoi(it->enddt());
+	SimplePopupPanel* _popupPanel = new SimplePopupPanel(SimplePopupPanel::SimplePopupType::AdminNotice, it->content());
+	if (_popupPanel)
+	{
+		LayerManager::getSingleton().pushDynamicLayer(_popupPanel, DYNAMIC_PUSH_LAYER);
+		_popupPanel->RegistTurnOffAdminMessage(stoi(it->enddt())); //remain from end
+	}
+	mValidNotidata.erase(it);
+}
+
 void GameDataManager::setGameKind(int kind)
 {
 	if (kind == -1)
@@ -3581,19 +3676,36 @@ tm GameDataManager::StringToTime(string timeStr)
 		return tm();
 
 	struct tm time;
+	if (timeStr.length() > 5) {
+		//string format from server ===>  "0000-00-00 00:00"
+		time.tm_year = boost::lexical_cast<int>(timeStr.substr(0, 4)) - 1900; //year
+		time.tm_mon = boost::lexical_cast<int>(timeStr.substr(5, 2)) - 1; //month
+		time.tm_mday = boost::lexical_cast<int>(timeStr.substr(8, 2)); //day
+		time.tm_hour = boost::lexical_cast<int>(timeStr.substr(11, 2)); //Hour
+		time.tm_min = boost::lexical_cast<int>(timeStr.substr(14, 2)); //minute
+		time.tm_sec = 0;
+		time.tm_isdst = 0;
+		time.tm_wday = 0;
+		time.tm_yday = 0;
 
-	//string format from server ===>  "0000-00-00 00:00"
-	time.tm_year = boost::lexical_cast<int>(timeStr.substr(0, 4)) - 1900; //year
-	time.tm_mon = boost::lexical_cast<int>(timeStr.substr(5, 2)) - 1; //month
-	time.tm_mday = boost::lexical_cast<int>(timeStr.substr(8, 2)); //day
-	time.tm_hour = boost::lexical_cast<int>(timeStr.substr(11, 2)); //Hour
-	time.tm_min = boost::lexical_cast<int>(timeStr.substr(14, 2)); //minute
-	time.tm_sec = 0;
-	time.tm_isdst = 0;
-	time.tm_wday = 0;
-	time.tm_yday = 0;
+		return time;
+	}
+	else {
+		time_t current = GetNowTime();
+		struct tm* current_tm = localtime(&current);
+		time.tm_year = current_tm->tm_year;
+		time.tm_mon = current_tm->tm_mon; //month
+		time.tm_mday = current_tm->tm_mday; //day
+		time.tm_hour = boost::lexical_cast<int>(timeStr.substr(0, 2)); //Hour
+		time.tm_min = boost::lexical_cast<int>(timeStr.substr(3, 2)); //minute
+		time.tm_sec = 0;
+		time.tm_isdst = 0;
+		time.tm_wday = 0;
+		time.tm_yday = 0;
+
+		return time;
+	}
 	
-	return time;
 }
 
 void GameDataManager::setModel() //init Player Model Data

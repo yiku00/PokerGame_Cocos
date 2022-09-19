@@ -12,11 +12,11 @@ extern "C"
 	@param env Pointer to JVM environment
 	@param thiz Reference to Java this object
 	*/
-	JNIEXPORT void JNICALL Java_com_newzensoft_inApp_IapManager_OnIapResult(JNIEnv* env, jclass thiz, jboolean sucess, jstring errMsg, jstring tid ,jstring receipt)
+	JNIEXPORT void JNICALL Java_com_newzensoft_inApp_IapManager_OnIapResult(JNIEnv* env, jclass thiz, jboolean sucess, jstring errMsg, jstring tid ,jstring receipt, jstring pid)
 	{
 		CCLog("Java_com_newzensoft_social_OneStoreManager_OnOneStoreLoginResult");
 		bool isSucess = sucess;
-		IapManager::getSingleton().onOneStorePurchaseRequestResult(isSucess, JniHelper::jstring2string(errMsg), JniHelper::jstring2string(tid), JniHelper::jstring2string(receipt));
+		IapManager::getSingleton().onOneStorePurchaseRequestResult(isSucess, JniHelper::jstring2string(errMsg), JniHelper::jstring2string(tid), JniHelper::jstring2string(receipt), JniHelper::jstring2string(pid));
 	}
 
 	JNIEXPORT void JNICALL Java_com_newzensoft_googleinapp_GoogleIapManager_OnIapResult(JNIEnv* env, jclass thiz, jboolean sucess, jstring errMsg, jstring tid, jstring txid, jstring receipt)
@@ -26,9 +26,17 @@ extern "C"
 		IapManager::getSingleton().onGoogleStorePurchaseRequestResult(isSucess, JniHelper::jstring2string(errMsg), JniHelper::jstring2string(tid), JniHelper::jstring2string(txid), JniHelper::jstring2string(receipt));
 	}
 
+/*	JNIEXPORT void JNICALL Java_com_newzensoft_inApp_IapManager_OnIapRemainResult(JNIEnv* env, jclass thiz, jboolean sucess, jstring errMsg, jstring tid, jstring receipt, jstring pid) {
+		CCLog("OneStoreManagerRemainRemain_OnOneStoreLoginResult");
+		bool isSucess = sucess;
+		IapManager::getSingleton().onOneStorePurchaseRemainRequestResult(isSucess, JniHelper::jstring2string(errMsg), JniHelper::jstring2string(tid), JniHelper::jstring2string(receipt), JniHelper::jstring2string(pid));
+	}*/
+
 /*	JNIEXPORT jstring JNICALL Java_com_newzensoft_inApp_IapManager_CallPurchaseStart(JNIEnv* env, jclass clazz, jstring pid) {
 		CCLog("start Purchase Flow");
 		return pid;
 	}*/
 }
+
+
 

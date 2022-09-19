@@ -631,7 +631,7 @@ void LobbyOptionPanel::onClicked(const string& name)
 	{
 		//COUPON//WEB VIEW
 		GameDataManager::getSingletonPtr()->PlayGameSound(EFX_GAME_BTN);
-		IGAWorksManager::getSingletonPtr()->OpenCouponDialog(true);
+		//IGAWorksManager::getSingletonPtr()->OpenCouponDialog(true);
 	}
 #endif
 	else if (name == "openGameOptionBtn") {

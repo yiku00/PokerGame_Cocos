@@ -108,16 +108,16 @@ GameService::GameService()
 	#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 		new AndroidUtilManager();
 		//AndroidUtilManager::getSingletonPtr()->InitWebView("http://www.daum.net", 50, 50, 1000, 500);
-		new IGAWorksManager();
-		new CrittercismManager();
+		//new IGAWorksManager();
+		//new CrittercismManager();
 		new FacebookManager();
 		new GoogleManager();
 		//GoogleManager::getSingleton().googleInit();
 		new IapManager();
-		new UnityAdsManager();		
+		//new UnityAdsManager();		
 		//new OneStoreManager();
-		new AdColonyManager();
-		new VungleManager();
+		//new AdColonyManager();
+		//new VungleManager();
 		new AdmobManager();		
 	#endif
 	new ExternalLibListener();	
@@ -156,13 +156,13 @@ GameService::~GameService()
 		
 	#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 		delete AndroidUtilManager::getSingletonPtr();
-		delete IGAWorksManager::getSingletonPtr();
-		delete CrittercismManager::getSingletonPtr();
+		//delete IGAWorksManager::getSingletonPtr();
+		//delete CrittercismManager::getSingletonPtr();
 		delete FacebookManager::getSingletonPtr();
 		delete GoogleManager::getSingletonPtr();
 		delete IapManager::getSingletonPtr();
-		delete UnityAdsManager::getSingletonPtr();
-		delete AdColonyManager::getSingletonPtr();
+	//	delete UnityAdsManager::getSingletonPtr();
+		//delete AdColonyManager::getSingletonPtr();
 		delete VungleManager::getSingletonPtr();		
 	#endif
 }

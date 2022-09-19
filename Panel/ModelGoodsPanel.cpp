@@ -173,11 +173,11 @@ void ModelGoodsPanel::SetBtnText(const std::wstring& _text)
 void ModelGoodsPanel::setIndex(int tIdx,int idx , TAB_TYPE tabType)
 {
 	this->tIdx = tIdx;
-	this->mIdx = idx;
-	//if(m_panelType == MODEL_TYPE::MODEL_INVEN || m_panelType == MODEL_TYPE::MODEL_SHOP)
-	//	this->mIdx = idx;
-	//else if(m_panelType == MODEL_TYPE::MODEL_INVEN_SUB || m_panelType == MODEL_TYPE::MODEL_SHOP_SUB)
-	//	this->mIdx = GameDataManager::getSingletonPtr()->getModelInfo(idx, MODEL_INDEX);
+	//this->mIdx = idx;
+	if(m_panelType == MODEL_TYPE::MODEL_INVEN || m_panelType == MODEL_TYPE::MODEL_SHOP || m_panelType == MODEL_TYPE::MODEL_SHOP_SUB)
+		this->mIdx = idx;
+	else if(m_panelType == MODEL_TYPE::MODEL_INVEN_SUB )
+		this->mIdx = GameDataManager::getSingletonPtr()->getModelInfo(idx, MODEL_INDEX);
 	
 	m_ButtonPanel->getLabel("txt_price1")->setColor(StringConverter::parseColor3B("ffffff"));
 	getImage("img_model_blur_maxim")->setVisible(false);
@@ -279,7 +279,7 @@ void ModelGoodsPanel::setIndex(int tIdx,int idx , TAB_TYPE tabType)
 		{
 			getImage("img_model_blur_maxim")->setVisible(false);
 
-			W_ModelData temp = GameDataManager::getSingletonPtr()->FindShopModel(tIdx, idx, tabType);
+			W_ModelData temp = GameDataManager::getSingletonPtr()->FindShopModel(tIdx, mIdx, tabType);
 			std::string goldDesc = GameDataManager::getSingletonPtr()->GetKoreanLiteral(StringConverter::toString(temp.gold()), 2);
 			SetBtnText(StringConverter::toWstring(goldDesc));	// 가격
 			m_Name->setString(temp.name().c_str());
@@ -289,7 +289,7 @@ void ModelGoodsPanel::setIndex(int tIdx,int idx , TAB_TYPE tabType)
 				mCharacter->setSpriteFrameWithFile("model/" + temp.filename());
 				PanelHelper::setCompactImage(mCharacter, getDummy("img_character_boxer"));
 			}
-			m_ButtonPanel->setVisible(idx >= 0 && !GameDataManager::getSingletonPtr()->hasModel(tIdx,idx, tabType));
+			m_ButtonPanel->setVisible(false);
 		}
 	}
 }

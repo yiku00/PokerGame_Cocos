@@ -178,29 +178,29 @@ void FriendCell::InitFriendPhoto(int _index, bool isTryDownload)
 	DOWNLOAD_FILE_TYPE _type = DOWNLOAD_FILE_TYPE::FRIEND_PHOTO;
 	//기덕 default 이미지
 	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getDefaultImg());
-	if (_info->has_imageurl() && _info->imageurl() != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			_info->name(),
-			_info->imageurl(),
-			_type,
-			mUserPhoto,
-			isTryDownload,
-			STATIC_PHOTO_FOLDER,
-			_index
-			);
+	//if (_info->has_imageurl() && _info->imageurl() != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		_info->name(),
+	//		_info->imageurl(),
+	//		_type,
+	//		mUserPhoto,
+	//		isTryDownload,
+	//		STATIC_PHOTO_FOLDER,
+	//		_index
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			UpdateFriendPhoto(_index);			
-		}
-	}
-	else
-	{
-		mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->characterid()));
-	}
-
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		UpdateFriendPhoto(_index);			
+	//	}
+	//}
+	//else
+	//{
+	//	mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->characterid()));
+	//}
+	mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(_info->characterid()));
 	CCRect rect = mMainPanel->getDummy("dmy_photo");
 	mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
 }

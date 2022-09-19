@@ -309,8 +309,34 @@ void SlotMachineWheelPanel::OnEndWheelSpin()
 			}
 		}
 	}
-	if(GameDataManager::getSingletonPtr()->m_SlotMachineIcon[0] != -1)
-		m_fRewardPoint = GameDataManager::getSingletonPtr()->m_SlotMachineIcon[0];
+
+	if (GameDataManager::getSingletonPtr()->m_SlotMachineIcon[0] != -1) {
+		switch (GameDataManager::getSingletonPtr()->m_SlotMachineIcon[0]) {
+		case 1:
+			m_fRewardPoint = 4;
+			break;
+		case 2:
+			m_fRewardPoint = 5;
+			break;
+		case 3:
+			m_fRewardPoint = 3;
+			break;
+		case 4:
+			m_fRewardPoint = 2;
+			break;
+		case 5:
+			m_fRewardPoint = 1;
+			break;
+		case 6:
+			m_fRewardPoint = 6;
+			break;
+		case 7:
+			m_fRewardPoint = 10;
+			break;
+		}
+	}
+		
+
 	//else 
 	//	CCLog("<< !!error: m_SlotMachineIcon: m_SlotMachineIcon[0]: %d", GameDataManager::getSingletonPtr()->m_SlotMachineIcon[0]);
 
@@ -342,7 +368,6 @@ void SlotMachineWheelPanel::OnEndWheelSpin()
 	int count = 0;
 
 	//0	 36  72  108  144  180  216  252  288  324  360
-
 	m_pWheelSpin->runAction(CCSequence::create(
 		CCRotateTo::create(m_fRewardPoint * 0.2f, m_fRewardPoint * 36),
 		CCCallFunc::create(this, callfunc_selector(SlotMachineWheelPanel::OnSelectEvent)),
@@ -605,6 +630,18 @@ void SlotMachineWheelPanel::onClicked(const string& name)
 		int64 tmp = -1 * GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_GameMoneyLoss;
 		if(tmp > -50000000000000)
 		OnStartWheelSpin();
+
+	//0	 36  72  108  144  180  216  252  288  324  360
+	//0	30	60	90	120	150	180	210	240	270	300	330	360
+	//5억 10억 20억 50억 100억 500억
+	//m_fRewardPoint = 2 : 가리킴 50억, 실제 돈 10억
+	//m_fRewardPoint = 3 : 가리킴 20억, 실제 돈 20억
+	//m_fRewardPoint = 5 : 가리킴 10억, 실제 돈 100억
+		/*m_pWheelSpin->runAction(CCSequence::create(
+			CCRotateTo::create(m_fRewardPoint * 0.2f, m_fRewardPoint * 36),
+			CCCallFunc::create(this, callfunc_selector(SlotMachineWheelPanel::OnSelectEvent)),
+			NULL));
+		m_fRewardPoint += 1.f;*/
 	}
 }
 

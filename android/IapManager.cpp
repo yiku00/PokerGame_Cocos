@@ -6,9 +6,12 @@
 #include "SimplePopupPanel.h"
 #include "W_PayReserveReq.pb.h"
 #include "W_PayReserveRes.pb.h"
+#include "../../protocpp/W_RestorePayReq.pb.h"
+#include "../../protocpp/W_RestorePayRes.pb.h"
 #include "base/CCScheduler.h"
 #include "../Game/PlayerData.h"
 #include "../Game/GameDataManager.h"
+#include "../Scene/LobbyScene.h"
 
 template<> IapManager* Nx::Singleton<IapManager>::msSingleton = 0;
 
@@ -154,13 +157,15 @@ void IapManager::sendPaymentRequest(std::string productId, std::string produceNa
 	}
 }
 
-void IapManager::onOneStorePurchaseRequestResult(bool isSucess, string errMsg, string tid , string receipt)
+void IapManager::onOneStorePurchaseRequestResult(bool isSucess, string errMsg, string tid , string receipt, string pid)
 {
-	CCLog("onOneStorePurchaseRequestResultonOneStorePurchaseRequestResultonOneStorePurchaseRequestResultonOneStorePurchaseRequestResult");
-	CCLog("the tid is = %s", tid.c_str());
+	CCLog("onOneStorePurchaseRequestResulton!!!!!!!!!!!!!!!!!!!!!!");
+	CCLog("the tid is = %s and receipt is a %s", tid.c_str(), receipt.c_str());
+
 	STCMD_IAP_ONESTORE_REQUEST_RESULT iapRequestResult;
 	iapRequestResult.isSucess = isSucess;
 	iapRequestResult.errMsg = errMsg;
+	iapRequestResult.pid = pid;
 	iapRequestResult.tid = tid;
 	iapRequestResult.txid = "";
 	iapRequestResult.receipt = receipt;
@@ -169,6 +174,24 @@ void IapManager::onOneStorePurchaseRequestResult(bool isSucess, string errMsg, s
 	CCLog("IapManager::onRequestResult isSucess = %d , tid = %s , receipt = %s", isSucess , tid.c_str(), receipt.c_str());
 	CCmdQueue::getSingleton().pushQueue(iapRequestResult);
 }
+
+void IapManager::onOneStorePurchaseRemainRequestResult(bool isSucess, string errMsg, string tid, string receipt, string pid)
+{
+	CCLog("onOneStorePurchaseRequestResulton@@@@@@@@@@@@@@@@@@@@@@@");
+	CCLog("the tid is = %s and receipt is a %s", tid.c_str(), receipt.c_str());
+
+	STCMD_IAP_ONESTORE_REMAIN_REQUEST_RESULT iapRemainRequestResult;
+	iapRemainRequestResult.isSucess = isSucess;
+	iapRemainRequestResult.errMsg = errMsg;
+	iapRemainRequestResult.pid = pid;
+	iapRemainRequestResult.tid = tid;
+	iapRemainRequestResult.txid = "";
+	iapRemainRequestResult.receipt = receipt;
+
+	CCLog("IapManager::onRequestResult isSucess = %d , tid = %s , receipt = %s", isSucess, tid.c_str(), receipt.c_str());
+	CCmdQueue::getSingleton().pushQueue(iapRemainRequestResult);
+}
+
 
 void IapManager::launchPurchaseFlow(string productId, string produceName, string tID)
 {
@@ -249,5 +272,44 @@ void IapManager::onGoogleStoreCheckPurchaseRequestResult(bool isSucess, string i
 	CCmdQueue::getSingleton().pushQueue(iapRequestResult);
 }
 
+int t = 0;
+void IapManager::checkUnpaid(std::string tid, std::string pid, std::string uid) //여기서 자바로 보내줄게 
+{
+
+	CCLog("itsalamaicoom");
+	IapManagerObject obj;
+
+	if (!obj.getObject())
+		return;
+	//인스턴스 생성하고 기다린다음
+	
+	
+	if (t < 2) {
+		int a = 0;
+		for (int i = 0; i < 15000; i++) { //1중첩 for문
+			for (int j = 0; j < 15000; j++) { //2중첩 for문
+				a++;
+			}
+		}
+		t++;
+	}
+	
+
+	JniMethodInfo t;
+
+	
+	if (JniHelper::getMethodInfo(t, IAP_JAVA_OBJECT, "restorePurchases", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V")) { // 실제로 보내준다.
+		jstring jproductId = t.env->NewStringUTF(pid.c_str());
+		jstring jproduceName = t.env->NewStringUTF(uid.c_str());
+		jstring jproductTid = t.env->NewStringUTF(tid.c_str());
+		t.env->CallVoidMethod(obj.getObject(), t.methodID, jproductId, jproductTid, jproduceName);
+		//t.env->CallVoidMethod(obj.getObject(), t.methodID, jproductId, jproductTid);
 
 
+		//t.env->CallVoidMethod(obj.getObject(), t.methodID, true, jproductId, jproduceName, jproductTid);
+		t.env->DeleteLocalRef(t.classID);
+		t.env->DeleteLocalRef(jproductId);
+		t.env->DeleteLocalRef(jproductTid);
+		t.env->DeleteLocalRef(jproduceName);
+	}
+}

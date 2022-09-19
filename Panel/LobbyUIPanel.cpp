@@ -103,6 +103,7 @@ void LobbyUIPanel::InitPanel()
 
 void LobbyUIPanel::applyData()
 {
+	CCLOG("DRAW CHARACTER TRACKING: In apply Data");
 	makeUserCharacter();
 	applyUserData();
 	ReadyAppear();
@@ -1021,8 +1022,10 @@ bool LobbyUIPanel::handling(STCMD &stCmd)
 
 void LobbyUIPanel::makeUserCharacter()
 {
+	CCLOG("DRAW CHARACTER TRACKING: In makeUserCharacter");
 	if (m_pCharaShadow == nullptr)
 	{
+		CCLOG("DRAW CHARACTER TRACKING: In m_pCharaShadow is null");
 		m_pCharaShadow = new SkelObject();
 
 		m_pCharaShadow->setSkelAnim("ui/character_shadow_8888.json");
@@ -1032,6 +1035,8 @@ void LobbyUIPanel::makeUserCharacter()
 		this->addChild(m_pCharaShadow, 1);
 		m_pCharaShadow->release();
 	}
+	else
+		CCLOG("DRAW CHARACTER TRACKING: In m_pCharaShadow is not null");
 	UpdateUserCharacter();
 }
 
@@ -1074,6 +1079,7 @@ void LobbyUIPanel::UpdateUserCharacter()
 		m_pUserCharaUnder->release();
 		m_pCharaShadow->addChild(m_pUserCharacter);
 		m_pUserCharacter->release();
+		CCLOG("DRAW CHARACTER TRACKING: In UpdateUserCharacter");
 	}	
 }
 

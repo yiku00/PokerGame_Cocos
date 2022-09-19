@@ -4,7 +4,8 @@
 
 // Version
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 7021
+#define VERSION_MINOR 7028 //2022년 9월 16일 7029 
+//#define VERSION_MINOR 7021 //내부서버 클라 버전
 #define VERSION_MAINTENANCE 1
 #define VERSION_NAME "BETA 3"
 

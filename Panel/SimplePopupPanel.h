@@ -66,7 +66,9 @@ public: // Button::Listener
 public:
 	virtual void onRefresh();
 	void TurnOffAdminMessage(float t);
+	void TurnOnAdminMessage();
 	void RegistTurnOffAdminMessage(float remainDt);
+	void RegistTurnOnAdminMessage(float remainDt);
 public:
 	void setGeneralListener(CCObject* target, ObjectListener listener) { mTarget = target; mGeneralListener = listener; }
 public:
@@ -131,4 +133,7 @@ private:
 	Script * mAdminText;
 
 	bool mActivatge;
+public:
+	int RemainFromStart;
+	int RemainFromEnd;
 };

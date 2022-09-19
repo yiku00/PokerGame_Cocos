@@ -28,7 +28,7 @@ private:
 private:
 	CCSize mContentsSize;
 	Panel* mMainPanel;
-	SkelObject* Trophy;
+	Widget* Trophy;
 	RankInfoContentPanel* mRankInfoPanel;
 
 	Nx::Label* mVictoryAmountLabel;

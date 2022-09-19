@@ -98,7 +98,7 @@ void TicketContentPanel::refreshData()
 	int ticketCount = GameDataManager::getSingleton().getTicketCount(mTicketData.id());
 	mTicketAmount->setString(StringConverter::toString(ticketCount).c_str());
 
-	bool isOpenFlag = ticketCount > 0 && mTicketData.isopen();
+	bool isOpenFlag = ticketCount > 0;
 	bool canSum = getCanSum();
 	bool canDisplaySum = mTicketData.movetype() < 4;
 	if (isOpenFlag) {

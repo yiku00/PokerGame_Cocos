@@ -232,8 +232,19 @@ struct STCMD_IAP_ONESTORE_REQUEST_RESULT : public STCMD_META < STCMD_IAP_ONESTOR
 	bool isSucess;
 	string errMsg;
 	string tid;			//서버에서 주는 유니크값
+	string pid;
 	string txid;		//영수증 idx
 	string receipt;		
+};
+
+struct STCMD_IAP_ONESTORE_REMAIN_REQUEST_RESULT : public STCMD_META < STCMD_IAP_ONESTORE_REMAIN_REQUEST_RESULT >
+{
+	bool isSucess;
+	string errMsg;
+	string pid;
+	string tid;			//서버에서 주는 유니크값
+	string txid;		//영수증 idx
+	string receipt;
 };
 
 struct STCMD_IAP_GOOGLESTORE_REQUEST_RESULT : public STCMD_META < STCMD_IAP_GOOGLESTORE_REQUEST_RESULT >

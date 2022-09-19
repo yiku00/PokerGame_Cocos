@@ -104,7 +104,7 @@ private:
 	void MoveCellUpdate(int _moveV);
 
 private:
-	void sendW_PayReq(string tID, string txId, string receipt);
+	void sendW_PayReq(string tID, string txId, string receipt, string pid);
 	void recvW_PayRes(HttpMessage* msg);
 	void sendWPayReserveReq(int cashId);
 	void recvWPayReserveRes(HttpMessage* msg);

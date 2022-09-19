@@ -3,9 +3,6 @@ package com.newzensoft.inApp;
 
 import static org.cocos2dx.lib.Cocos2dxHelper.getActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.gaa.sdk.iap.AcknowledgeListener;
 import com.gaa.sdk.iap.AcknowledgeParams;
 import com.gaa.sdk.iap.ConsumeListener;
@@ -26,11 +23,6 @@ import com.gaa.sdk.iap.RecurringProductParams;
 import com.gaa.sdk.iap.StoreInfoListener;
 
 
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.newzensoft.poker.R;
-import com.numixent.inApp.helper.ConverterFactory;
-import com.numixent.inApp.helper.ParamsBuilder;
-import com.numixent.inApp.pdu.Response;
 /*import com.skplanet.dodo.IapPlugin;
 import com.skplanet.dodo.IapResponse;
 import com.skplanet.dodo.helper.PaymentParams;
@@ -38,17 +30,10 @@ import com.skplanet.dodo.helper.PaymentParams.Builder;*/
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.nfc.Tag;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -56,13 +41,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -70,14 +50,9 @@ import java.util.Set;
 
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
-
-
-
 
 
 public class IapManager extends AppCompatActivity implements PurchasesUpdatedListener {
@@ -93,15 +68,19 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 	private Set<String> mTokenToBe;
 	private boolean isServiceConnected;
 
-	public static native void OnIapResult(boolean sucess , String errMsg , String tid , String ToServToken);
+	public static native void OnIapResult(boolean sucess , String errMsg , String tid , String ToServToken, String pid);
+	//public static native void OnIapRemainResult(boolean sucess , String errMsg , String tid , String ToServToken, String pid);
 	/*public static native String CallPurchaseStart(String pid);*/
 
 	private static String ToServTID ="";
+	private static String globalTID="";
 	private static String GProducerName="";
 	private static String PdToken="";
 	public String url = "";
 	public String data = "";
 	public Boolean Check_Payment = false;
+	public Boolean Repay_Flag = false;
+
 
 
 	public static Object instance() {
@@ -117,9 +96,11 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 		});
 
 		while(true) {
-			System.out.println("instance 4");
-			if (iapMgr != null)
+			if (iapMgr != null){
+				System.out.println("instance 4");
 				return iapMgr;
+			}
+
 		}
 
 	}
@@ -153,7 +134,7 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 
 				if (iapResult.isSuccess()) {  //the purchasesclient is ready   , you can query purchases here
 					Log.e(TAG, " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@iapResult isSUccess @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		
+
 					isServiceConnected = true;
 					//여기에 결제 요청 붙여보자
 					/*showBuyProductDialog();*/
@@ -481,6 +462,95 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 		});
 	}
 
+
+
+	//NZ창헌 ===========================0902===========================
+	public void restorePurchases(final String pid, final String tid, final String uid) //우리쪽에서 보내준 pid tid 하나씩
+	{
+		Repay_Flag= true;
+		/*globalTID = tid;*/
+		Log.d(TAG, "Unused Data Java Android Logic Start1");
+		mPurchaseClient.queryPurchasesAsync(PurchaseClient.ProductType.INAPP, new PurchasesListener() {
+			@Override
+			public void onPurchasesResponse(IapResult iapResult, @Nullable List<PurchaseData> list) {
+				Log.d(TAG, "Unused Data Java Android Logic Start2");
+
+				if (iapResult.isSuccess() && list != null) {
+					if(list.size() != 0){
+						for(PurchaseData purchaseData : list){
+							Log.d(TAG, "PPAAYY"+ purchaseData.toString()); // 실제로 결제 안된애들
+
+							if(purchaseData.getProductId().equals(pid)){
+								unConsumedListExecute(purchaseData, pid, tid, uid);    //pid, tid, uid를 보내준다
+							}
+						}
+					}
+
+					else{
+						Log.d(TAG, "list size 0");
+
+					}
+				} else {
+					Log.d(TAG, iapResult.toJsonString());
+				}
+			}
+		});
+	}
+
+
+
+	//소비되지 않은 결제리스트 소비
+	private void unConsumedListExecute(final PurchaseData purchaseData, final String pid, final String tid, final String uid)   //이미 구매는 되었다. => 확인할 것은 얘가 소비가 되었는지.
+	//이미 for 루프 돌면서 하나씩 확인하니까, 얘가
+	{
+
+		ConsumeParams params = ConsumeParams.newBuilder().setPurchaseData(purchaseData).build();
+		mPurchaseClient.consumeAsync(params, new ConsumeListener() {
+			@Override
+			public void onConsumeResponse(IapResult iapResult, @Nullable PurchaseData purchaseData) {
+				if (iapResult.isSuccess() && purchaseData != null) {
+
+					if (purchaseData.getPurchaseToken().equals(purchaseData.getPurchaseToken())) {
+						Log.d(TAG, "IINNSSIIDDEE"+ purchaseData.toString());
+
+
+						//url = "http://106.243.69.210:8080/OneStorePayCheck";
+						url = "http://43.200.41.21:8080/OneStorePayCheck";
+						globalTID = tid;
+						data = String.format("pid=%s&uid=%s&tid=%s&token=%s", pid, uid, tid, purchaseData.getPurchaseToken());
+						Log.d(TAG, "After data parsing");
+						/*Check_Repayment = true;*/
+						httpGetConnection(url, data, purchaseData, pid);
+
+
+						Log.d(TAG, "onConsumeResponse");
+
+					}
+
+
+					else{
+						Log.d(TAG, "purchaseToken not equal");
+					}
+				}
+
+				else if(iapResult.getResponseCode() == PurchaseClient.ResponseCode.RESULT_ITEM_NOT_OWNED) //	아이템을 소유하고 있지 않아 소비 할 수 없습니다.
+				{
+					Log.d(TAG, "Item RESULT_ITEM_NOT_OWNED!!!!!!!!");
+				}
+				else if(iapResult.getResponseCode() == PurchaseClient.ResponseCode.RESULT_ITEM_UNAVAILABLE) //	아이템을 소유하고 있지 않아 소비 할 수 없습니다.
+				{
+					Log.d(TAG, "Item RESULT_ITEM_UNAVAILABLE!!!!!!!!");
+				}
+
+
+				else {
+					Log.d(TAG, iapResult.toJsonString());
+				}
+			}
+		}); //consumeAsync End
+	}
+
+
 	public void onConsumeFinished(PurchaseData purchaseData, IapResult iapResult) throws Exception {
 
 		Log.e(TAG, "onConsumeFinishedonConsumeFinishedonConsumeFinishedonConsumeFinished");
@@ -505,11 +575,11 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 			url = "http://43.200.41.21:8080/OneStorePayCheck";
 
 			data = String.format("pid=%s&uid=%s&tid=%s&token=%s", purchaseData.getProductId(), GProducerName, ToServTID, PdToken);
-			httpGetConnection(url, data);
+			httpGetConnection(url, data, purchaseData, purchaseData.getProductId());
 		}
 	}
 
-	public static void httpGetConnection(String UrlData, String ParamData) {
+	public static void httpGetConnection(String UrlData, String ParamData, PurchaseData purchaseData, String ppid) {
 		System.out.println("111111111");
 
 		//http 요청 시 url 주소와 파라미터 데이터를 결합하기 위한 변수 선언
@@ -568,14 +638,40 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 			String responseCode = String.valueOf(conn.getResponseCode());
 			System.out.println("http 응답 코드 : "+responseCode);
 			System.out.println("http 응답 데이터 : "+returnData); //0이면성공으로 처리
-			/*if(returnData.equals("0"))
+
+			if(returnData.equals("0")) {
+				if(!ToServTID.equals("") || !PdToken.equals(""))
+					OnIapResult(returnData.equals("0"), null, ToServTID, PdToken, purchaseData.getProductId());   // 그냥 일반 결제다
+				else if(iapMgr.Repay_Flag) {
+					OnIapResult(true, null, globalTID, purchaseData.getPurchaseToken(), ppid); //비정상으로 결제가 끝났을때 200 / 0으로 들어오는 경우 결제 처리
+					iapMgr.Repay_Flag = false;
+				}
+			}
+			else if(returnData.equals("1") && iapMgr.Repay_Flag){
+				OnIapResult(true , null , globalTID , purchaseData.getPurchaseToken(), ppid);
+				iapMgr.Repay_Flag = false;
+			}
+
+			//OnIapResult(true , null , globalTID , purchaseData.getPurchaseToken(), ppid);
+			/*if(returnData.equals("0")){
+				if(iapMgr.Repay_Flag)
+				{
+					OnIapResult(true , null , globalTID , purchaseData.getPurchaseToken(), ppid);
+					iapMgr.Repay_Flag=false;
+				}
+				else{
+					OnIapResult(returnData.equals("0") , null , ToServTID , PdToken, purchaseData.getProductId());
+				}
+			}
+
+			else //실패시
 			{
-				System.out.println("101010101010101010101010110");
-				OnIapResult(true , null , ToServTID , PdToken);
+				if(iapMgr.Repay_Flag){
+
+					iapMgr.Repay_Flag=false;
+				}
+
 			}*/
-
-			OnIapResult(returnData.equals("0") , null , ToServTID , PdToken);
-
 
 
 		} catch (IOException e) {
@@ -743,7 +839,7 @@ public class IapManager extends AppCompatActivity implements PurchasesUpdatedLis
 		spe.putString(null, storeCode);
 		spe.apply();
 	}
-	
+
 	//======================== 여기서부터는 MainActivity 그냥 때려받은 코드 ====================================
 
 	private void showProgressDialog() {

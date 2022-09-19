@@ -886,48 +886,52 @@ void LobbyTopUiPanel::InitMyPhoto(bool isDownload /*= true*/)
 	bool _ret;
 	//디폴트 이미지로 설정
 	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getDefaultImg());
-	if (GameDataManager::getSingletonPtr()->m_FacebookUserId != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			GameDataManager::getSingletonPtr()->m_FacebookUserId,
-			GameDataManager::getSingletonPtr()->m_FacebookUserPhotoUrl,
-			DOWNLOAD_FILE_TYPE::MY_PHOTO,
-			mUserPhoto,
-			isDownload,
-			STATIC_PHOTO_FOLDER
-			);
+	//if (GameDataManager::getSingletonPtr()->m_FacebookUserId != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		GameDataManager::getSingletonPtr()->m_FacebookUserId,
+	//		GameDataManager::getSingletonPtr()->m_FacebookUserPhotoUrl,
+	//		DOWNLOAD_FILE_TYPE::MY_PHOTO,
+	//		mUserPhoto,
+	//		isDownload,
+	//		STATIC_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{			
-			mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));			
-			m_isUseProfilePhoto = true;
-		}
-	}
-	else if (GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_NickName,
-			GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl,
-			DOWNLOAD_FILE_TYPE::MY_PHOTO,
-			mUserPhoto,
-			isDownload,
-			STATIC_PHOTO_FOLDER
-			);
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{			
+	//		mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));			
+	//		m_isUseProfilePhoto = true;
+	//	}
+	//}
+	//else if (GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_NickName,
+	//		GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl,
+	//		DOWNLOAD_FILE_TYPE::MY_PHOTO,
+	//		mUserPhoto,
+	//		isDownload,
+	//		STATIC_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{			
-			mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));			
-			m_isUseProfilePhoto = true;
-		}
-	}
-	else
-	{
-		mUserPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());		
-		mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
-		m_isUseProfilePhoto = true;		
-	}	
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{			
+	//		mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));			
+	//		m_isUseProfilePhoto = true;
+	//	}
+	//}
+	//else
+	//{
+	//	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());		
+	//	mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
+	//	m_isUseProfilePhoto = true;		
+	//}	
+
+	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());
+	mUserPhoto->fit(CCSize(rect.getMaxX() - rect.getMinX(), rect.getMaxY() - rect.getMinY()));
+	m_isUseProfilePhoto = true;
 }
 
 void LobbyTopUiPanel::refreshBank()

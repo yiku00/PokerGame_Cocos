@@ -144,23 +144,23 @@ void LobbyRecordRankContentPanel::initFriendPhoto(bool down)
 	DOWNLOAD_FILE_TYPE _type = DOWNLOAD_FILE_TYPE::RANKING_PHOTO;
 	//기덕 default 이미지
 	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getDefaultImg());
-	if (mReputeRankInfo.has_imageurl() && mReputeRankInfo.imageurl() != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			mReputeRankInfo.name(),
-			mReputeRankInfo.imageurl(),
-			_type,
-			mUserPhoto,
-			down,
-			STATIC_PHOTO_FOLDER,
-			mIdx
-			);		
-	}
-	else
-	{
-		mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(mReputeRankInfo.characterid()));
-	}
-
+	//if (mReputeRankInfo.has_imageurl() && mReputeRankInfo.imageurl() != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		mReputeRankInfo.name(),
+	//		mReputeRankInfo.imageurl(),
+	//		_type,
+	//		mUserPhoto,
+	//		down,
+	//		STATIC_PHOTO_FOLDER,
+	//		mIdx
+	//		);		
+	//}
+	//else
+	//{
+	//	mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(mReputeRankInfo.characterid()));
+	//}
+	mUserPhoto->setSpriteFrameWithFile(PokerResourceHelper::getCharacterPhotoImg(mReputeRankInfo.characterid()));
 	mUserPhoto->fit(mMainPanel->getDummy("dmy_photo").size);
 }
 
@@ -170,44 +170,45 @@ void LobbyRecordRankContentPanel::initMyPhoto()
 	bool _ret;
 	//디폴트 이미지로 설정
 	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getDefaultImg());
-	if (GameDataManager::getSingletonPtr()->m_FacebookUserId != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			GameDataManager::getSingletonPtr()->m_FacebookUserId,
-			GameDataManager::getSingletonPtr()->m_FacebookUserPhotoUrl,
-			DOWNLOAD_FILE_TYPE::MY_PHOTO,
-			mUserPhoto,
-			false,
-			STATIC_PHOTO_FOLDER
-			);
+	//if (GameDataManager::getSingletonPtr()->m_FacebookUserId != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		GameDataManager::getSingletonPtr()->m_FacebookUserId,
+	//		GameDataManager::getSingletonPtr()->m_FacebookUserPhotoUrl,
+	//		DOWNLOAD_FILE_TYPE::MY_PHOTO,
+	//		mUserPhoto,
+	//		false,
+	//		STATIC_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			mUserPhoto->fit(mMainPanel->getDummy("dmy_photo").size);
-		}
-	}
-	else if (GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl != "")
-	{
-		_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
-			GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_NickName,
-			GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl,
-			DOWNLOAD_FILE_TYPE::MY_PHOTO,
-			mUserPhoto,
-			false,
-			STATIC_PHOTO_FOLDER
-			);
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		mUserPhoto->fit(mMainPanel->getDummy("dmy_photo").size);
+	//	}
+	//}
+	//else if (GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl != "")
+	//{
+	//	_ret = GameDataManager::getSingletonPtr()->LoadFileImage(
+	//		GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_NickName,
+	//		GameDataManager::getSingletonPtr()->GetPlayerDataPtr()->m_thumbnailUrl,
+	//		DOWNLOAD_FILE_TYPE::MY_PHOTO,
+	//		mUserPhoto,
+	//		false,
+	//		STATIC_PHOTO_FOLDER
+	//		);
 
-		// 로딩되었으면 이미지를 교체한다.
-		if (_ret)
-		{
-			mUserPhoto->fit(mMainPanel->getDummy("dmy_photo").size);
-		}
-	}
-	else
-	{
-		mUserPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());		
-	}
+	//	// 로딩되었으면 이미지를 교체한다.
+	//	if (_ret)
+	//	{
+	//		mUserPhoto->fit(mMainPanel->getDummy("dmy_photo").size);
+	//	}
+	//}
+	//else
+	//{
+	//	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());		
+	//}
+	mUserPhoto->setSpriteFrameWithFile(FriendHelper::getMycharacterImg());
 	mUserPhoto->fit(mMainPanel->getDummy("dmy_photo").size);
 }
 

@@ -341,7 +341,7 @@ public:
 
 	void sendLimitedReq(vector<W_LimitShopData_eLimitType> types);
 	void recvLimitedRes(HttpMessage* msg);
-
+	time_t getLastSendNotiTime() { return LastSendNotiTime; };
 	void sendNoticeinfoReq();
 	void recvNoticeinfoRes(HttpMessage* msg);
 private:
@@ -349,7 +349,7 @@ private:
 	string mInitialVector;
 	string m_LobbyIp;
 	int16 m_LobbyPort;
-	int64 LastSendNotiTime = 0;
+	time_t LastSendNotiTime = 0;
 	eReplayType m_ReplayType;
 
 	bool m_bMsgWait;
